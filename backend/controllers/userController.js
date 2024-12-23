@@ -61,3 +61,53 @@ export const logout = (req, res) => {
   // No token to clear on the server, just respond with a success message
   res.status(200).json({ message: 'Logged out successfully' });
 };
+
+// export const getUserDetails = async (req, res) => {
+//   const token = req.headers.authorization?.split(' ')[1]; // Extract the token from the Bearer scheme
+
+//   if (!token) {
+//     return res.status(401).json({ error: 'No token provided. Unauthorized.' });
+//   }
+
+//   try {
+//     // Verify the token
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//     // Fetch the user details from the database
+//     const user = await User.findById(decoded.id).select('-password'); // Exclude the password field
+
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found.' });
+//     }
+
+//     // Send user details in the response
+//     res.status(200).json({ user });
+//   } catch (err) {
+//     res.status(500).json({ error: `Server error: ${err.message}` });
+//   }
+// };
+export const getUserDetails = async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
+  console.log('Received token:', token); // Debug log to ensure the token is being passed
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided. Unauthorized.' });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Fetch the user details from the database
+    const user = await User.findById(decoded.id).select('-password'); // Exclude the password field
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    // Send user details in the response
+    res.status(200).json({ user });
+  } catch (err) {
+    res.status(500).json({ error: `Server error: ${err.message}` });
+  }
+};

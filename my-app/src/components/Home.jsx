@@ -141,7 +141,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Import js-cookie
-import Navbar from './Navbar';
+import Navbar from './shared/Navbar';
 
 const Home = () => {
   const [questions, setQuestions] = useState([]);
