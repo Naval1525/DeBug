@@ -49,8 +49,10 @@
 //     res.status(500).json({ error: err.message });
 //   }
 // };
+import Answer from '../models/Answer.js';
 import Question from '../models/Question.js';
 import User from '../models/User.js';
+
 import { validationResult } from 'express-validator'; // To handle validation checks
 
 // Create Question
@@ -209,5 +211,36 @@ export const deleteQuestion = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error while deleting question' });
+  }
+};
+export const getUserAndAnswersByQuestion = async (req, res) => {
+  const { questionId } = req.params;
+
+  try {
+    // Check if the question exists
+    const question = await Question.findById(questionId).populate('user', 'username');
+    if (!question) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    // Fetch answers for the question
+    const answers = await Answer.find({ question: questionId })
+      .populate('user', 'username') // Populate user details for each answer
+      .sort({ createdAt: -1 }); // Sort by most recent
+
+    if (answers.length === 0) {
+      return res.status(404).json({ error: 'No answers found for this question' });
+    }
+
+    // Combine question author and answers
+    const response = {
+      questionAuthor: question.user,
+      answers,
+    };
+
+    res.status(200).json(response);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error while fetching user and answers' });
   }
 };

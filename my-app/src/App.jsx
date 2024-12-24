@@ -7,6 +7,8 @@ import QuestionDetail from './components/QuestionDetail';
 import Homepage from './components/Homepage';
 import UserDetails from './components/UserDetails';
 import Profile from './components/Proflile';
+import QuestionsAndAnswers from './components/QuestionsAndAnswers';
+import UserList from './components/UserList';
 
 function App() {
   return (
@@ -16,7 +18,11 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/question/:id" element={<QuestionDetail />} />
+        <Route path="/questions" element={<QuestionsAndAnswers/>} />
+
+        <Route path="/users" element={<UserList></UserList>} />
+
+        <Route path="/questions/:id" element={<QuestionDetail />} />
         <Route path="/profile" element={<Profile/>} />
       </Routes>
     </Router>

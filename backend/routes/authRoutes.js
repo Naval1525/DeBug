@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUserDetails, login, register } from '../controllers/userController.js';
+import { getAllUsers, getUserDetails, login, register } from '../controllers/userController.js';
 import { auth } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -8,5 +8,6 @@ const router = express.Router();
 router.post('/register', register);
 router.post('/login', login);
 router.get('/user',  getUserDetails);
+router.get('/users', getAllUsers);
 
 export default router;

@@ -278,7 +278,7 @@ const HomePage = () => {
         {[...Array(50)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute h-2 w-2 rounded-full bg-purple-500/20"
+            className="absolute h-2 w-2 rounded-full bg-purple-300"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -434,8 +434,7 @@ const HomePage = () => {
             variants={fadeInUp}
           >
             Your go-to platform for coding questions, community-driven answers,
-            and knowledge sharing. Join our community of over 1 million
-            developers worldwide!
+            and knowledge sharing. Join our community !
           </motion.p>
           <motion.div className="flex gap-6" variants={fadeInUp}>
             <motion.button

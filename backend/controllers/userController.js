@@ -111,3 +111,20 @@ export const getUserDetails = async (req, res) => {
     res.status(500).json({ error: `Server error: ${err.message}` });
   }
 };
+export const getAllUsers = async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await User.find();
+
+    // If no users are found, return a 404 message
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    // Return the users as a JSON response
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    return res.status(500).json({ message: 'An error occurred while retrieving users' });
+  }
+};
