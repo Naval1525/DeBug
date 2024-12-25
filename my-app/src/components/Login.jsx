@@ -136,6 +136,7 @@ const Login = () => {
 
       if (token) {
         Cookies.set('token', token, { expires: 7 });
+
         navigate('/');
       }
     } catch (err) {

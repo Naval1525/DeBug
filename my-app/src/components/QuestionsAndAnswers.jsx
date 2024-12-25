@@ -566,7 +566,6 @@
 // // // //       </div>
 // // // //     );
 
-
 // // // //   return (
 // // // //     <div className="min-h-screen bg-black text-white">
 // // // //       {/* Alert */}
@@ -1455,107 +1454,120 @@
 // };
 
 // export default QuestionsAndAnswers;
-import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import { Sliders, Calendar, Tag, Award, MessageCircle } from 'lucide-react';
-import Navbar from './shared/Navbar';
+import { useState, useEffect } from "react";
+import CreateQuestionForm from "./CreateQuestionForm";
+import Cookies from "js-cookie";
+import { Sliders, Calendar, Tag, Award, MessageCircle } from "lucide-react";
+import Navbar from "./shared/Navbar";
 
 const QuestionsAndAnswers = () => {
-    const [questions, setQuestions] = useState([]);
-      const [loading, setLoading] = useState(true);
-      const [error, setError] = useState(null);
-      const [filters, setFilters] = useState({
-        search: '',
-        tags: [],
-        dateRange: 'all',
-        minVotes: '',
-        maxVotes: '',
-        minAnswers: '',
-        maxAnswers: '',
-        userReputation: 'all',
-        sortBy: 'newest',
-        hasAcceptedAnswer: null,
-        questionStatus: 'all'
-      });
-      const [availableTags, setAvailableTags] = useState([]);
-      const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [questions, setQuestions] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({
+    search: "",
+    tags: [],
+    dateRange: "all",
+    minVotes: "",
+    maxVotes: "",
+    minAnswers: "",
+    maxAnswers: "",
+    userReputation: "all",
+    sortBy: "newest",
+    hasAcceptedAnswer: null,
+    questionStatus: "all",
+  });
 
-      const token = Cookies.get("token");
+  const [availableTags, setAvailableTags] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-      useEffect(() => {
-        fetchQuestions();
-      }, []);
+  const token = Cookies.get("token");
 
-      useEffect(() => {
-        const tags = [...new Set(questions.flatMap(q => q.tags))];
-        setAvailableTags(tags);
-      }, [questions]);
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
 
-      const fetchQuestions = async () => {
-        try {
-          const response = await fetch("http://localhost:8000/api/questions");
-          if (!response.ok) throw new Error("Failed to fetch questions");
-          const data = await response.json();
-          setQuestions(data);
-        } catch (err) {
-          setError("Failed to load questions");
-        } finally {
-          setLoading(false);
-        }
-      };
+  useEffect(() => {
+    const tags = [...new Set(questions.flatMap((q) => q.tags))];
+    setAvailableTags(tags);
+  }, [questions]);
 
-      const handleVote = (questionId, voteType) => {
-        console.log(`Voted ${voteType} for question ${questionId}`);
-      };
+  const fetchQuestions = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/questions");
+      if (!response.ok) throw new Error("Failed to fetch questions");
+      console.log(response)
+      const data = await response.json();
+      setQuestions(data);
+    } catch (err) {
+      setError("Failed to load questions");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const filteredQuestions = questions.filter(question => {
-        const matchesSearch =
-          question.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-          question.body.toLowerCase().includes(filters.search.toLowerCase());
+  const handleVote = (questionId, voteType) => {
+    console.log(`Voted ${voteType} for question ${questionId}`);
+  };
+  const handleQuestionCreated = (newQuestion) => {
+    setQuestions(prev => [newQuestion, ...prev]);
+  };
 
-        const matchesTags =
-          filters.tags.length === 0 ||
-          filters.tags.some(tag => question.tags.includes(tag));
+  const filteredQuestions = questions.filter((question) => {
+    const matchesSearch =
+      question.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+      question.body.toLowerCase().includes(filters.search.toLowerCase());
 
-        const matchesVotes =
-          (!filters.minVotes || question.votes >= parseInt(filters.minVotes)) &&
-          (!filters.maxVotes || question.votes <= parseInt(filters.maxVotes));
+    const matchesTags =
+      filters.tags.length === 0 ||
+      filters.tags.some((tag) => question.tags.includes(tag));
 
-        const matchesAnswers =
-          (!filters.minAnswers || question.answers >= parseInt(filters.minAnswers)) &&
-          (!filters.maxAnswers || question.answers <= parseInt(filters.maxAnswers));
+    const matchesVotes =
+      (!filters.minVotes || question.votes >= parseInt(filters.minVotes)) &&
+      (!filters.maxVotes || question.votes <= parseInt(filters.maxVotes));
 
-        const matchesDate = () => {
-          if (filters.dateRange === 'all') return true;
-          const questionDate = new Date(question.createdAt);
-          const now = new Date();
-          switch (filters.dateRange) {
-            case 'today':
-              return questionDate.toDateString() === now.toDateString();
-            case 'week':
-              return questionDate >= new Date(now - 7 * 24 * 60 * 60 * 1000);
-            case 'month':
-              return questionDate >= new Date(now - 30 * 24 * 60 * 60 * 1000);
-            default:
-              return true;
-          }
-        };
+    const matchesAnswers =
+      (!filters.minAnswers ||
+        question.answers >= parseInt(filters.minAnswers)) &&
+      (!filters.maxAnswers || question.answers <= parseInt(filters.maxAnswers));
 
-        return matchesSearch && matchesTags && matchesVotes && matchesAnswers && matchesDate();
-      });
+    const matchesDate = () => {
+      if (filters.dateRange === "all") return true;
+      const questionDate = new Date(question.createdAt);
+      const now = new Date();
+      switch (filters.dateRange) {
+        case "today":
+          return questionDate.toDateString() === now.toDateString();
+        case "week":
+          return questionDate >= new Date(now - 7 * 24 * 60 * 60 * 1000);
+        case "month":
+          return questionDate >= new Date(now - 30 * 24 * 60 * 60 * 1000);
+        default:
+          return true;
+      }
+    };
 
-      const FilterSection = ({ title, children }) => (
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-white mb-3">{title}</h3>
-          <div className="space-y-2">{children}</div>
-        </div>
-      );
+    return (
+      matchesSearch &&
+      matchesTags &&
+      matchesVotes &&
+      matchesAnswers &&
+      matchesDate()
+    );
+  });
 
+  const FilterSection = ({ title, children }) => (
+    <div className="mb-6">
+      <h3 className="text-lg font-semibold text-white mb-3">{title}</h3>
+      <div className="space-y-2">{children}</div>
+    </div>
+  );
 
   return (
     // Using a subtle dark background that's easier on the eyes
     <div className="min-h-screen bg-[#121622]">
-        <Navbar></Navbar>
+      <Navbar></Navbar>
       <div className="max-w-7xl mx-auto">
         {/* Search Bar with softer colors */}
         <div className="p-4 border-b border-gray-800/50">
@@ -1566,9 +1578,30 @@ const QuestionsAndAnswers = () => {
                      placeholder-gray-400 focus:outline-none focus:border-indigo-400/50 focus:ring-1
                      focus:ring-indigo-400/30 transition-all duration-200"
             value={filters.search}
-            onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, search: e.target.value }))
+            }
           />
         </div>
+        {/* Create Question Button */}
+        <div className="p-4 flex justify-end">
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600
+               transition-colors duration-200 flex items-center gap-2"
+          >
+            <span className="text-lg">+</span>
+            Create Question
+          </button>
+        </div>
+
+        {/* Create Question Modal */}
+        {isCreateModalOpen && (
+          <CreateQuestionForm
+            onClose={() => setIsCreateModalOpen(false)}
+            onQuestionCreated={handleQuestionCreated}
+          />
+        )}
 
         <div className="flex">
           {/* Sidebar with improved contrast and spacing */}
@@ -1580,7 +1613,9 @@ const QuestionsAndAnswers = () => {
                          text-gray-200 focus:outline-none focus:border-indigo-400/50 focus:ring-1
                          focus:ring-indigo-400/30 transition-all duration-200"
                 value={filters.sortBy}
-                onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, sortBy: e.target.value }))
+                }
               >
                 <option value="newest">Newest First</option>
                 <option value="votes">Most Voted</option>
@@ -1592,14 +1627,19 @@ const QuestionsAndAnswers = () => {
             {/* Date Range Filter */}
             <FilterSection title="Time Period">
               <div className="space-y-2 pl-1">
-                {['all', 'today', 'week', 'month'].map(range => (
-                  <label key={range} className="flex items-center space-x-3 text-gray-300 hover:text-gray-100
-                                              cursor-pointer transition-colors duration-150 py-1">
+                {["all", "today", "week", "month"].map((range) => (
+                  <label
+                    key={range}
+                    className="flex items-center space-x-3 text-gray-300 hover:text-gray-100
+                                              cursor-pointer transition-colors duration-150 py-1"
+                  >
                     <input
                       type="radio"
                       name="dateRange"
                       checked={filters.dateRange === range}
-                      onChange={() => setFilters(prev => ({ ...prev, dateRange: range }))}
+                      onChange={() =>
+                        setFilters((prev) => ({ ...prev, dateRange: range }))
+                      }
                       className="text-indigo-400 focus:ring-indigo-400/30 focus:ring-offset-gray-800"
                     />
                     <span className="capitalize">{range}</span>
@@ -1618,7 +1658,12 @@ const QuestionsAndAnswers = () => {
                            text-gray-200 focus:outline-none focus:border-indigo-400/50 focus:ring-1
                            focus:ring-indigo-400/30 transition-all duration-200"
                   value={filters.minVotes}
-                  onChange={(e) => setFilters(prev => ({ ...prev, minVotes: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      minVotes: e.target.value,
+                    }))
+                  }
                 />
                 <input
                   type="number"
@@ -1627,29 +1672,38 @@ const QuestionsAndAnswers = () => {
                            text-gray-200 focus:outline-none focus:border-indigo-400/50 focus:ring-1
                            focus:ring-indigo-400/30 transition-all duration-200"
                   value={filters.maxVotes}
-                  onChange={(e) => setFilters(prev => ({ ...prev, maxVotes: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      maxVotes: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </FilterSection>
 
             {/* Tags with improved visual hierarchy */}
             <FilterSection title="Tags">
-              <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto pr-2
-                            scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/30">
-                {availableTags.map(tag => (
+              <div
+                className="flex flex-wrap gap-2 max-h-48 overflow-y-auto pr-2
+                            scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/30"
+              >
+                {availableTags.map((tag) => (
                   <button
                     key={tag}
                     className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 ${
                       filters.tags.includes(tag)
-                        ? 'bg-indigo-400/20 text-indigo-200 border border-indigo-400/30'
-                        : 'bg-[#1e2333] text-gray-300 border border-gray-700/30 hover:bg-[#252b3d] hover:border-gray-600/50'
+                        ? "bg-indigo-400/20 text-indigo-200 border border-indigo-400/30"
+                        : "bg-[#1e2333] text-gray-300 border border-gray-700/30 hover:bg-[#252b3d] hover:border-gray-600/50"
                     }`}
-                    onClick={() => setFilters(prev => ({
-                      ...prev,
-                      tags: prev.tags.includes(tag)
-                        ? prev.tags.filter(t => t !== tag)
-                        : [...prev.tags, tag]
-                    }))}
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        tags: prev.tags.includes(tag)
+                          ? prev.tags.filter((t) => t !== tag)
+                          : [...prev.tags, tag],
+                      }))
+                    }
                   >
                     {tag}
                   </button>
@@ -1665,7 +1719,9 @@ const QuestionsAndAnswers = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-400"></div>
               </div>
             ) : error ? (
-              <div className="text-red-400 bg-red-400/10 px-4 py-2 rounded-lg">{error}</div>
+              <div className="text-red-400 bg-red-400/10 px-4 py-2 rounded-lg">
+                {error}
+              </div>
             ) : (
               <div className="space-y-6">
                 {filteredQuestions.map((question) => (
@@ -1678,7 +1734,7 @@ const QuestionsAndAnswers = () => {
                       {/* Vote buttons with softer interaction */}
                       <div className="flex flex-col items-center gap-2 min-w-[80px]">
                         <button
-                          onClick={() => handleVote(question._id, 'up')}
+                          onClick={() => handleVote(question._id, "up")}
                           className="p-2 rounded-lg bg-[#1e2333] hover:bg-[#252b3d] text-gray-300
                                    transition-colors duration-200"
                         >
@@ -1688,7 +1744,7 @@ const QuestionsAndAnswers = () => {
                           {question.votes || 0}
                         </span>
                         <button
-                          onClick={() => handleVote(question._id, 'down')}
+                          onClick={() => handleVote(question._id, "down")}
                           className="p-2 rounded-lg bg-[#1e2333] hover:bg-[#252b3d] text-gray-300
                                    transition-colors duration-200"
                         >
@@ -1700,15 +1756,19 @@ const QuestionsAndAnswers = () => {
                         <h3
                           className="text-xl font-medium text-gray-100 hover:text-indigo-300
                                    transition-colors duration-200 cursor-pointer"
-                          onClick={() => window.location.href = `/questions/${question._id}`}
+                          onClick={() =>
+                            (window.location.href = `/questions/${question._id}`)
+                          }
                         >
                           {question.title}
                         </h3>
-                        <p className="mt-3 text-gray-300 leading-relaxed">{question.body}</p>
+                        <p className="mt-3 text-gray-300 leading-relaxed">
+                          {question.body}
+                        </p>
 
                         <div className="flex flex-wrap gap-4 items-center mt-4">
                           <span className="text-indigo-300">
-                            {question.answers || 0} answers
+                            {question.answerCount || 0} answers
                           </span>
                           <span className="text-gray-400">
                             {new Date(question.createdAt).toLocaleDateString()}
@@ -1723,7 +1783,9 @@ const QuestionsAndAnswers = () => {
                               {question.author?.name}
                             </span>
                             <span className="text-indigo-300">
-                              {question.author?.reputation?.toLocaleString() || 0} rep
+                              {question.author?.reputation?.toLocaleString() ||
+                                0}{" "}
+                              rep
                             </span>
                           </div>
                         </div>
@@ -1753,15 +1815,6 @@ const QuestionsAndAnswers = () => {
 };
 
 export default QuestionsAndAnswers;
-
-
-
-
-
-
-
-
-
 
 // import React, { useState, useEffect } from 'react';
 // import { QuestionCard } from '../components/QuestionCard';

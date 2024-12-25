@@ -51,7 +51,7 @@
 // };
 import Answer from '../models/Answer.js';
 import Question from '../models/Question.js';
-import User from '../models/User.js';
+
 
 import { validationResult } from 'express-validator'; // To handle validation checks
 
@@ -131,12 +131,62 @@ export const getQuestions = async (req, res) => {
       return res.status(404).json({ error: 'No questions found' });
     }
 
-    res.status(200).json(questions);
+    // Get the number of answers for each question
+    const questionsWithAnswerCount = await Promise.all(
+      questions.map(async (question) => {
+        const answerCount = await Answer.countDocuments({ question: question._id });
+        return {
+          ...question.toObject(),
+          answerCount,
+        };
+      })
+    );
+
+    res.status(200).json(questionsWithAnswerCount);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error while fetching questions' });
   }
 };
+// export const getQuestions = async (req, res) => {
+//   const { tags, minVotes, maxVotes, status, search } = req.query;
+
+//   const filter = {};
+
+//   if (tags) filter.tags = { $in: tags.split(',') };
+//   if (status) filter.status = status;
+//   if (search) {
+//     filter.$or = [
+//       { title: { $regex: search, $options: 'i' } },
+//       { body: { $regex: search, $options: 'i' } },
+//     ];
+//   }
+//   if (minVotes || maxVotes) {
+//     filter.$and = [];
+//     if (minVotes) {
+//       filter.$and.push({ upvotes: { $gte: parseInt(minVotes, 10) } });
+//     }
+//     if (maxVotes) {
+//       filter.$and.push({ upvotes: { $lte: parseInt(maxVotes, 10) } });
+//     }
+//   }
+
+//   try {
+//     // Get questions with filtering
+//     const questions = await Question.find(filter)
+//       .populate('user', 'username') // Populate user details
+//       .sort({ createdAt: -1 }); // Sort by most recent
+
+//     if (questions.length === 0) {
+//       return res.status(404).json({ error: 'No questions found' });
+//     }
+
+//     res.status(200).json(questions);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Server error while fetching questions' });
+//   }
+// };
 
 // Get a question by ID
 export const getQuestionById = async (req, res) => {
@@ -213,34 +263,83 @@ export const deleteQuestion = async (req, res) => {
     res.status(500).json({ error: 'Server error while deleting question' });
   }
 };
+// export const getUserAndAnswersByQuestion = async (req, res) => {
+//   const { questionId } = req.params;
+
+//   try {
+//     // Check if the question exists
+//     const question = await Question.findById(questionId).populate('user', 'username');
+//     if (!question) {
+//       return res.status(404).json({ error: 'Question not found' });
+//     }
+
+//     // Fetch answers for the question
+//     const answers = await Answer.find({ question: questionId })
+//       .populate('user', 'username') // Populate user details for each answer
+//       .sort({ createdAt: -1 }); // Sort by most recent
+
+//     if (answers.length === 0) {
+//       return res.status(404).json({ error: 'No answers found for this question' });
+//     }
+
+//     // Combine question author and answers
+//     const response = {
+//       questionAuthor: question.user,
+//       answers,
+//     };
+
+//     res.status(200).json(response);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Server error while fetching user and answers' });
+//   }
+// };
 export const getUserAndAnswersByQuestion = async (req, res) => {
   const { questionId } = req.params;
 
   try {
-    // Check if the question exists
-    const question = await Question.findById(questionId).populate('user', 'username');
+    // Fetch question with populated user
+    const question = await Question.findById(questionId).populate('user', 'username reputation');
     if (!question) {
       return res.status(404).json({ error: 'Question not found' });
     }
 
     // Fetch answers for the question
     const answers = await Answer.find({ question: questionId })
-      .populate('user', 'username') // Populate user details for each answer
-      .sort({ createdAt: -1 }); // Sort by most recent
+      .populate('user', 'username reputation')
+      .sort({ createdAt: -1 });
 
-    if (answers.length === 0) {
-      return res.status(404).json({ error: 'No answers found for this question' });
-    }
-
-    // Combine question author and answers
+    // Return structured response
     const response = {
-      questionAuthor: question.user,
-      answers,
+      question: {
+        _id: question._id,
+        title: question.title,
+        body: question.body,
+        tags: question.tags,
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt,
+        questionAuthor: {
+          username: question.user.username,
+          reputation: question.user.reputation || 0
+        }
+      },
+      answers: answers.map(answer => ({
+        _id: answer._id,
+        body: answer.body,
+        createdAt: answer.createdAt,
+        status: answer.status,
+        upvotes: answer.upvotes,
+        downvotes: answer.downvotes,
+        user: {
+          username: answer.user.username,
+          reputation: answer.user.reputation || 0
+        }
+      }))
     };
 
     res.status(200).json(response);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Server error while fetching user and answers' });
+    res.status(500).json({ error: 'Server error while fetching question details' });
   }
 };

@@ -1,5 +1,5 @@
-import React from 'react';
-import { MessageCircle, ThumbsUp, Eye, Clock, User } from 'lucide-react';
+import React from "react";
+import { MessageCircle, ThumbsUp, Eye, Clock, User } from "lucide-react";
 
 export const QuestionCard = React.forwardRef(({ question }, ref) => (
   <div
@@ -13,7 +13,7 @@ export const QuestionCard = React.forwardRef(({ question }, ref) => (
         <h3
           className="text-xl font-medium text-gray-100 hover:text-indigo-300
                      transition-colors duration-200 cursor-pointer flex-1"
-          onClick={() => window.location.href = `/questions/${question._id}`}
+          onClick={() => (window.location.href = `/questions/${question._id}`)}
         >
           {question.title}
         </h3>
@@ -31,19 +31,27 @@ export const QuestionCard = React.forwardRef(({ question }, ref) => (
     </div>
 
     <div className="p-6">
-      <p className="text-gray-300 leading-relaxed line-clamp-3">{question.body}</p>
+      <p className="text-gray-300 leading-relaxed line-clamp-3">
+        {question.body}
+      </p>
 
       <div className="grid grid-cols-3 gap-4 mt-6 py-4 border-y border-gray-700/20">
         <div className="flex flex-col items-center">
-          <div className="text-2xl font-medium text-indigo-300">{question.votes || 0}</div>
+          <div className="text-2xl font-medium text-indigo-300">
+            {question.votes || 0}
+          </div>
           <div className="text-sm text-gray-400 mt-1">Votes</div>
         </div>
         <div className="flex flex-col items-center border-x border-gray-700/20">
-          <div className="text-2xl font-medium text-indigo-300">{question.answers || 0}</div>
+          <div className="text-2xl font-medium text-indigo-300">
+            {question.answers || 0}
+          </div>
           <div className="text-sm text-gray-400 mt-1">Answers</div>
         </div>
         <div className="flex flex-col items-center">
-          <div className="text-2xl font-medium text-indigo-300">{question.views || 0}</div>
+          <div className="text-2xl font-medium text-indigo-300">
+            {question.views || 0}
+          </div>
           <div className="text-sm text-gray-400 mt-1">Views</div>
         </div>
       </div>

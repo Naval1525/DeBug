@@ -8,7 +8,9 @@ import connectDB from "./config/db.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import answerRoutes from "./routes/answerRoutes.js";
+import reputationRoutes from './routes/reputationRoutes.js';
 import errorHandler from "./middleware/errorHandler.js";
+
 import cookieParser from 'cookie-parser';
 dotenv.config();
 const app = express();
@@ -42,6 +44,7 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/answers", answerRoutes);
+app.use('/api/reputation', reputationRoutes);
 
 // 404 Route
 app.use((req, res, next) => {
