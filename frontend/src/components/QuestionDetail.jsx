@@ -21,7 +21,7 @@ const QuestionDetail = () => {
 
   const fetchQuestionDetail = async (questionId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/questions/${questionId}/user-answers`);
+      const response = await fetch(`https://devflow-1.onrender.com/api/questions/${questionId}/user-answers`);
       const data = await response.json();
 
       if (response.ok) {
@@ -47,7 +47,7 @@ const QuestionDetail = () => {
   };
 
   const fetchUser  = async (token) => {
-    const response = await fetch('http://localhost:8000/api/auth/user', {
+    const response = await fetch('https://devflow-1.onrender.com/api/auth/user', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -69,7 +69,7 @@ const QuestionDetail = () => {
       const userId = user.user._id; // Assuming the user object has an _id property
 
 
-      const response = await fetch(`http://localhost:8000/api/answers/${answerId}/vote`, {
+      const response = await fetch(`https://devflow-1.onrender.com/api/answers/${answerId}/vote`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ const QuestionDetail = () => {
   //   const token = Cookies.get('token');
 
   //   try {
-  //     const response = await fetch(`http://localhost:8000/api/answers/${answerId}/vote`, {
+  //     const response = await fetch(`https://devflow-1.onrender.com/api/answers/${answerId}/vote`, {
   //       method: 'PUT',
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ const QuestionDetail = () => {
     const token = Cookies.get('token');
 
     try {
-      const response = await fetch('http://localhost:8000/api/answers', {
+      const response = await fetch('https://devflow-1.onrender.com/api/answers', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

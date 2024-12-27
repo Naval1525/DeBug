@@ -43,7 +43,7 @@ const UserList = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/auth/users');
+        const response = await fetch('https://devflow-1.onrender.com/api/auth/users');
         const data = await response.json();
         setUsers(data);
         setFilteredUsers(data);
@@ -111,7 +111,7 @@ const UserList = () => {
 
     setProfileLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/auth/users/${userId}`, {
+      const response = await fetch(`https://devflow-1.onrender.com/api/auth/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

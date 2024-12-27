@@ -20,7 +20,7 @@ const UserDetails = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:8000/api/auth/user', {
+        const response = await axios.get('https://devflow-1.onrender.com/api/auth/user', {
           headers: {
             Authorization: `Bearer ${token}`, // Correctly send the token in the Authorization header
           },

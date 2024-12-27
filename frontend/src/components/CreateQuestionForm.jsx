@@ -23,7 +23,7 @@ const CreateQuestionForm = ({ onClose, onQuestionCreated }) => {
       if (!token) throw new Error("Authentication token is missing.");
 
       const response = await fetch(
-        "http://localhost:8000/api/questions/create",
+        "https://devflow-1.onrender.com/api/questions/create",
         {
           method: "POST",
           headers: {

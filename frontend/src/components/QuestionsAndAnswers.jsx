@@ -39,7 +39,7 @@ const QuestionsAndAnswers = () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/questions");
+      const response = await fetch("https://devflow-1.onrender.com/api/questions");
       if (!response.ok) throw new Error("Failed to fetch questions");
 
       const data = await response.json();
@@ -54,7 +54,7 @@ const QuestionsAndAnswers = () => {
   const handleVote = async (questionId, voteType) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/questions/${questionId}/vote`,
+        `https://devflow-1.onrender.com/api/questions/${questionId}/vote`,
         {
           method: "POST",
           headers: {
