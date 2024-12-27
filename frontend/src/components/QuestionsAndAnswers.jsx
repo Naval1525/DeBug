@@ -41,7 +41,7 @@ const QuestionsAndAnswers = () => {
     try {
       const response = await fetch("http://localhost:8000/api/questions");
       if (!response.ok) throw new Error("Failed to fetch questions");
-      console.log(response);
+
       const data = await response.json();
       setQuestions(data);
     } catch (err) {

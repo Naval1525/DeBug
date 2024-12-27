@@ -65,7 +65,7 @@ const QuestionDetail = () => {
     try {
       const token = Cookies.get('token');
       const user = await fetchUser (token); // Fetch user information
-      console.log(user.user._id);
+
       const userId = user.user._id; // Assuming the user object has an _id property
 
 

@@ -16,7 +16,7 @@ export const useQuestions = () => {
       );
       if (!response.ok) throw new Error("Failed to fetch questions");
       const data = await response.json();
-      console.log('Received data:', data); // Add this to debug
+
 
       // Guard against missing or invalid data
       const newQuestions = Array.isArray(data.questions) ? data.questions :

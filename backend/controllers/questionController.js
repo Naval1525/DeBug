@@ -139,12 +139,13 @@ export const getQuestions = async (req, res) => {
           ...question.toObject(),
           answerCount,
           user: {
-            username: question.user.username,
-            reputation: question.user.reputation,
+            username: question.user?.username,
+            reputation: question.user?.reputation,
           },
         };
       })
     );
+
 
     res.status(200).json(questionsWithDetails);
   } catch (err) {
@@ -374,8 +375,8 @@ export const getUserAndAnswersByQuestion = async (req, res) => {
         createdAt: question.createdAt,
         updatedAt: question.updatedAt,
         questionAuthor: {
-          username: question.user.username,
-          reputation: question.user.reputation || 0
+          username: question.user?.username,
+          reputation: question.user?.reputation || 0
         }
       },
       answers: answers.map(answer => ({

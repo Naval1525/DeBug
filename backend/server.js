@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import connectDB from "./config/db.js";
-
+import path from 'path'
 import questionRoutes from "./routes/questionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import answerRoutes from "./routes/answerRoutes.js";
@@ -21,7 +21,7 @@ app.use(helmet());
 
 // CORS configuration to allow only your frontend's origin
 const corsOptions = {
-  origin: "https://thunderous-lollipop-dc7bbf.netlify.app/",
+  origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
@@ -33,7 +33,7 @@ const limiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per window
 });
 app.use(limiter);
-
+const _dirname = path.resolve();
 // Parse incoming JSON
 app.use(express.json());
 
@@ -45,6 +45,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/answers", answerRoutes);
 app.use('/api/reputation', reputationRoutes);
+app.use(express.static(path.join(_dirname, "/frontend/dist")));
+app.get("*", (_,res) => {
+    res.sendFile(path.resolve(_dirname, "frontend/dist/index.html"));
+});
+
 
 // 404 Route
 app.use((req, res, next) => {
@@ -53,6 +58,7 @@ app.use((req, res, next) => {
 
 // Error handling middleware
 app.use(errorHandler);
+
 
 // Start Server
 const PORT = process.env.PORT || 5000;
