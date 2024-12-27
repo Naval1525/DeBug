@@ -21,7 +21,7 @@ app.use(helmet());
 
 // CORS configuration to allow only your frontend's origin
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://devflow-1.onrender.com",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };

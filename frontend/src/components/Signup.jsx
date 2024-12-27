@@ -18,7 +18,7 @@ const Signup = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', {
+      const response = await axios.post('api/auth/register', {
         username,
         email,
         password
