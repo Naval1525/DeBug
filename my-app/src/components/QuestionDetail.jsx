@@ -672,6 +672,7 @@ import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { MessageCircle, Award, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
+import Navbar from './shared/Navbar';
 
 const QuestionDetail = () => {
   const [question, setQuestion] = useState(null);
@@ -860,7 +861,10 @@ const QuestionDetail = () => {
   }
 
   return (
+    <div className=" bg-[#121622] ">
+    <Navbar></Navbar>
     <div className="min-h-screen bg-[#121622] p-6">
+
       <div className="max-w-4xl mx-auto">
         {/* Question Section */}
         <div className="bg-[#1a1f2e] rounded-xl p-6 mb-8 border border-gray-700/20">
@@ -1002,6 +1006,7 @@ const QuestionDetail = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

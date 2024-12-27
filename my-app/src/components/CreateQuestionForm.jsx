@@ -19,7 +19,7 @@ const CreateQuestionForm = ({ onClose, onQuestionCreated }) => {
 
     try {
       const token = Cookies.get("token");
-      console.log(token);
+
       if (!token) throw new Error("Authentication token is missing.");
 
       const response = await fetch(
