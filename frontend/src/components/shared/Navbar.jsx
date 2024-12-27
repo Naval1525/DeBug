@@ -294,34 +294,34 @@
 //     </nav>
 //   );
 // }
-import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import { Popover } from '@headlessui/react';
-import { motion } from 'framer-motion';
-import { Home, Users, MessageCircle, LogOut, User } from 'lucide-react';
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import { Popover } from "@headlessui/react";
+import { motion } from "framer-motion";
+import { Home, Users, MessageCircle, LogOut, User } from "lucide-react";
 
 export default function Navbar() {
   const [token, setToken] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    const tokenFromCookie = Cookies.get('token');
+    const tokenFromCookie = Cookies.get("token");
     setToken(tokenFromCookie);
     if (tokenFromCookie) {
-      setAvatarUrl('https://github.com/shadcn.png');
+      setAvatarUrl("https://github.com/shadcn.png");
     }
   }, []);
 
   const handleLogout = () => {
-    Cookies.remove('token');
+    Cookies.remove("token");
     setToken(null);
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   const navLinks = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/questions', label: 'Questions', icon: MessageCircle },
-    { href: '/users', label: 'Users', icon: Users },
+    { href: "/", label: "Home", icon: Home },
+    { href: "/questions", label: "Questions", icon: MessageCircle },
+    { href: "/users", label: "Users", icon: Users },
   ];
 
   return (
@@ -337,10 +337,11 @@ export default function Navbar() {
             className="text-3xl font-extrabold cursor-pointer"
             whileHover={{ scale: 1.05 }}
           >
-
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-              DevFlow
-            </span>
+            <a href="/">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                DevFlow
+              </span>
+            </a>
           </motion.div>
 
           <div className="flex items-center gap-8">
@@ -358,7 +359,8 @@ export default function Navbar() {
 
             {token ? (
               <Popover className="relative">
-                <Popover.Button as={motion.button}
+                <Popover.Button
+                  as={motion.button}
                   whileHover={{ scale: 1.05 }}
                   className="flex items-center gap-2"
                 >
@@ -373,7 +375,7 @@ export default function Navbar() {
                   <div className="space-y-1">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
-                      onClick={() => window.location.href = '/profile'}
+                      onClick={() => (window.location.href = "/profile")}
                       className="flex items-center gap-2 w-full p-2 text-left text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg transition-colors"
                     >
                       <User className="w-4 h-4" />
@@ -395,7 +397,7 @@ export default function Navbar() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => window.location.href = '/login'}
+                  onClick={() => (window.location.href = "/login")}
                   className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
                 >
                   Login
@@ -403,7 +405,7 @@ export default function Navbar() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => window.location.href = '/signup'}
+                  onClick={() => (window.location.href = "/signup")}
                   className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg transition-all"
                 >
                   Sign Up

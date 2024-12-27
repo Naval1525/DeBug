@@ -3,90 +3,7 @@ import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import Question from '../models/Question.js';
 import Answer from '../models/Answer.js';
-// Register User
-// export const register = async (req, res) => {
-//   const { username, email, password } = req.body;
 
-//   try {
-//     // Check if the user already exists
-//     const userExists = await User.findOne({ email });
-//     if (userExists) {
-//       return res.status(400).json({ error: 'User already exists with this email.' });
-//     }
-
-//     // Hash password manually
-//     const salt = await bcrypt.genSalt(10);
-//     const hashedPassword = await bcrypt.hash(password, salt);
-
-//     // Create and save the user
-//     const user = new User({ username, email, password: hashedPassword });
-//     const savedUser = await user.save();
-
-//     // Generate JWT token
-//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-//     // Send token in the response body (not in cookies)
-//     res.status(201).json({ message: 'User registered successfully!', token });
-//   } catch (err) {
-//     res.status(500).json({ error: `Server error: ${err.message}` });
-//   }
-// };
-// // Login User
-// export const login = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     // Check if the user exists
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res.status(400).json({ error: 'Invalid credentials' });
-//     }
-
-//     // Check if the password matches
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) {
-//       return res.status(400).json({ error: 'Invalid credentials' });
-//     }
-
-//     // Generate JWT token
-//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-//     // Send token in the response body (not in cookies)
-//     res.status(200).json({ message: 'Login successful', token });
-//   } catch (err) {
-//     res.status(500).json({ error: `Server error: ${err.message}` });
-//   }
-// };
-// // Logout User
-// export const logout = (req, res) => {
-//   // No token to clear on the server, just respond with a success message
-//   res.status(200).json({ message: 'Logged out successfully' });
-// };
-
-// export const getUserDetails = async (req, res) => {
-//   const token = req.headers.authorization?.split(' ')[1]; // Extract the token from the Bearer scheme
-
-//   if (!token) {
-//     return res.status(401).json({ error: 'No token provided. Unauthorized.' });
-//   }
-
-//   try {
-//     // Verify the token
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-//     // Fetch the user details from the database
-//     const user = await User.findById(decoded.id).select('-password'); // Exclude the password field
-
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found.' });
-//     }
-
-//     // Send user details in the response
-//     res.status(200).json({ user });
-//   } catch (err) {
-//     res.status(500).json({ error: `Server error: ${err.message}` });
-//   }
-// };
 export const register = async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -124,6 +41,42 @@ export const register = async (req, res) => {
 };
 
 // Login User
+// export const login = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   try {
+//     // Validate input fields
+//     if (!email || !password) {
+//       return res.status(400).json({ error: 'All fields are required.' });
+//     }
+
+//     // Check if the user exists
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ error: 'Invalid email or password.' });
+//     }
+
+//     // Check if the password matches
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ error: 'Invalid email or password.' });
+//     }
+
+//     // Generate JWT token
+//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+//     // Send response
+//     res.status(200).json({
+//       message: 'Login successful!',
+//       user: { id: user._id, username: user.username, email },
+//       token,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: `Server error: ${err.message}` });
+//   }
+// };
+
+// Login User
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -145,13 +98,42 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: 'Invalid email or password.' });
     }
 
+    // Calculate reputation
+    const questions = await Question.find({ user: user._id });
+    const answers = await Answer.find({ user: user._id });
+
+    let reputation = 0;
+
+    // Adding reputation points for questions created
+    reputation += questions.length * 5;
+
+    // Adding reputation points for answers created
+    reputation += answers.length * 10;
+
+    // Check if upvotes and downvotes are arrays and calculate reputation points
+    answers.forEach((answer) => {
+      if (Array.isArray(answer.upvotes)) {
+        reputation += answer.upvotes.length * 2; // Each upvote gives +2
+      }
+      if (Array.isArray(answer.downvotes)) {
+        reputation -= answer.downvotes.length * 2; // Each downvote gives -2
+      }
+      if (answer.accepted) {
+        reputation += 15; // Accepted answer gives +15
+      }
+    });
+
+    // Update the user's reputation in the database
+    user.reputation = reputation;
+    await user.save();
+
     // Generate JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // Send response
     res.status(200).json({
       message: 'Login successful!',
-      user: { id: user._id, username: user.username, email },
+      user: { id: user._id, username: user.username, email, reputation },
       token,
     });
   } catch (err) {
@@ -159,39 +141,7 @@ export const login = async (req, res) => {
   }
 };
 
-// export const getUserDetails = async (req, res) => {
-//   const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
-//   console.log('Received token:', token); // Debug log to ensure the token is being passed
 
-//   if (!token) {
-//     return res.status(401).json({ error: 'No token provided. Unauthorized.' });
-//   }
-
-//   try {
-//     // Verify the token
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-//     // Fetch the user details from the database
-//     const user = await User.findById(decoded.id).select('-password'); // Exclude the password field
-
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found.' });
-//     }
-
-//     // Fetch the user's questions and answers
-//     const questions = await Question.find({ user: decoded.id }).populate('user', 'username email');
-//     const answers = await Answer.find({ user: decoded.id }).populate('question', 'title body').populate('user', 'username email');
-
-//     // Send user details along with their questions and answers in the response
-//     res.status(200).json({
-//       user,
-//       questions,
-//       answers,
-//     });
-//   } catch (err) {
-//     res.status(500).json({ error: `Server error: ${err.message}` });
-//   }
-// };
 export const getUserDetails = async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
 
@@ -264,31 +214,6 @@ export const getUserDetails = async (req, res) => {
 
 
 
-// export const getUserDetails = async (req, res) => {
-//   const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
-//   console.log('Received token:', token); // Debug log to ensure the token is being passed
-
-//   if (!token) {
-//     return res.status(401).json({ error: 'No token provided. Unauthorized.' });
-//   }
-
-//   try {
-//     // Verify the token
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-//     // Fetch the user details from the database
-//     const user = await User.findById(decoded.id).select('-password'); // Exclude the password field
-
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found.' });
-//     }
-
-//     // Send user details in the response
-//     res.status(200).json({ user });
-//   } catch (err) {
-//     res.status(500).json({ error: `Server error: ${err.message}` });
-//   }
-// };
 export const getAllUsers = async (req, res) => {
   try {
     // Fetch all users from the database

@@ -1,241 +1,4 @@
-// import React from "react";
-// import { motion } from "framer-motion";
-// import Navbar from "./shared/Navbar";
 
-// const HomePage = () => {
-//   const fadeInUp = {
-//     initial: { opacity: 0, y: 20 },
-//     animate: { opacity: 1, y: 0 },
-//     transition: { duration: 0.6 }
-//   };
-
-//   const staggerChildren = {
-//     animate: {
-//       transition: {
-//         staggerChildren: 0.1
-//       }
-//     }
-//   };
-
-//   const features = [
-//     {
-//       title: "Ask Questions",
-//       description: "Post your toughest coding challenges and get answers from fellow developers.",
-//       icon: "🤔"
-//     },
-//     {
-//       title: "Answer Questions",
-//       description: "Share your expertise by answering questions and earn recognition.",
-//       icon: "✨"
-//     },
-//     {
-//       title: "Earn Reputation",
-//       description: "Contribute and build your profile as a top coder in the community.",
-//       icon: "🏆"
-//     },
-//     {
-//       title: "Find Solutions",
-//       description: "Search through thousands of coding questions and find solutions that work.",
-//       icon: "🔍"
-//     }
-//   ];
-
-//   const popularQuestions = [
-//     {
-//       title: "How can I optimize SQL queries for better performance?",
-//       answers: 10,
-//       time: "5 hours ago",
-//       tags: ["SQL", "Performance"]
-//     },
-//     {
-//       title: "What's the best way to implement authentication in a React app?",
-//       answers: 8,
-//       time: "3 hours ago",
-//       tags: ["React", "Auth"]
-//     },
-//     {
-//       title: "Why am I getting a segmentation fault in my C++ code?",
-//       answers: 12,
-//       time: "2 hours ago",
-//       tags: ["C++", "Debug"]
-//     }
-//   ];
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
-//       <Navbar />
-
-//       {/* Header Section */}
-//       <motion.header
-//         className="flex flex-col items-center text-center gap-8 p-16"
-//         initial="initial"
-//         animate="animate"
-//         variants={staggerChildren}
-//       >
-//         <motion.h1
-//           className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
-//           variants={fadeInUp}
-//         >
-//           Ask. Answer. Build Together.
-//         </motion.h1>
-//         <motion.p
-//           className="text-xl text-gray-300 max-w-2xl"
-//           variants={fadeInUp}
-//         >
-//           Your go-to platform for coding questions, community-driven answers, and knowledge sharing.
-//           Collaborate with coders worldwide!
-//         </motion.p>
-//         <motion.div
-//           className="flex gap-6"
-//           variants={fadeInUp}
-//         >
-//           <motion.button
-//             className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-lg font-semibold transform hover:scale-105 transition-transform"
-//             whileHover={{ scale: 1.05 }}
-//             whileTap={{ scale: 0.95 }}
-//           >
-//             Ask a Question
-//           </motion.button>
-//           <motion.button
-//             className="bg-gray-800 text-white px-8 py-3 rounded-lg border border-purple-500 font-semibold hover:bg-gray-700 transform hover:scale-105 transition-transform"
-//             whileHover={{ scale: 1.05 }}
-//             whileTap={{ scale: 0.95 }}
-//           >
-//             Explore Questions
-//           </motion.button>
-//         </motion.div>
-//       </motion.header>
-
-//       {/* Features Section */}
-//       <motion.section
-//         className="flex flex-wrap justify-center gap-8 px-8 py-16"
-//         initial="initial"
-//         whileInView="animate"
-//         variants={staggerChildren}
-//         viewport={{ once: true }}
-//       >
-//         {features.map((feature, index) => (
-//           <motion.div
-//             key={index}
-//             className="flex flex-col items-center text-center p-8 rounded-xl backdrop-blur-lg bg-gray-800/50 border border-gray-700 hover:border-purple-500 w-80 transform hover:scale-105 transition-all"
-//             variants={fadeInUp}
-//           >
-//             <span className="text-4xl mb-4">{feature.icon}</span>
-//             <h2 className="text-2xl font-semibold text-white mb-3">
-//               {feature.title}
-//             </h2>
-//             <p className="text-gray-300">{feature.description}</p>
-//           </motion.div>
-//         ))}
-//       </motion.section>
-
-//       {/* Popular Questions Section */}
-//       <motion.section
-//         className="px-8 py-16"
-//         initial="initial"
-//         whileInView="animate"
-//         variants={staggerChildren}
-//         viewport={{ once: true }}
-//       >
-//         <motion.h2
-//           className="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
-//           variants={fadeInUp}
-//         >
-//           Popular Questions
-//         </motion.h2>
-//         <motion.ul
-//           className="flex flex-col items-center gap-6 max-w-4xl mx-auto"
-//           variants={staggerChildren}
-//         >
-//           {popularQuestions.map((question, index) => (
-//             <motion.li
-//               key={index}
-//               className="w-full"
-//               variants={fadeInUp}
-//             >
-//               <motion.div
-//                 className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-purple-500 backdrop-blur-lg transform hover:scale-102 transition-all"
-//                 whileHover={{ scale: 1.02 }}
-//               >
-//                 <a href="#" className="text-xl font-medium text-white hover:text-purple-400 transition-colors">
-//                   {question.title}
-//                 </a>
-//                 <div className="flex flex-wrap gap-4 items-center mt-4 text-sm">
-//                   <span className="text-purple-400">{question.answers} answers</span>
-//                   <span className="text-gray-400">{question.time}</span>
-//                   <div className="flex gap-2">
-//                     {question.tags.map((tag, tagIndex) => (
-//                       <span
-//                         key={tagIndex}
-//                         className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm"
-//                       >
-//                         {tag}
-//                       </span>
-//                     ))}
-//                   </div>
-//                 </div>
-//               </motion.div>
-//             </motion.li>
-//           ))}
-//         </motion.ul>
-//       </motion.section>
-
-//       {/* Join Community Section */}
-//       <motion.section
-//         className="flex flex-col items-center text-center px-8 py-16"
-//         initial="initial"
-//         whileInView="animate"
-//         variants={staggerChildren}
-//         viewport={{ once: true }}
-//       >
-//         <motion.h2
-//           className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-6"
-//           variants={fadeInUp}
-//         >
-//           Join Our Community of Coders!
-//         </motion.h2>
-//         <motion.p
-//           className="text-xl text-gray-300 max-w-2xl mb-8"
-//           variants={fadeInUp}
-//         >
-//           Whether you're a beginner or an experienced developer, our platform is your space to learn, teach, and grow.
-//         </motion.p>
-//         <motion.button
-//           className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-10 py-4 rounded-lg font-semibold text-lg transform hover:scale-105 transition-transform"
-//           variants={fadeInUp}
-//           whileHover={{ scale: 1.05 }}
-//           whileTap={{ scale: 0.95 }}
-//         >
-//           Sign Up Now
-//         </motion.button>
-//       </motion.section>
-
-//       {/* Footer Section */}
-//       <motion.footer
-//         className="text-center py-8 border-t border-gray-800"
-//         initial="initial"
-//         whileInView="animate"
-//         variants={fadeInUp}
-//         viewport={{ once: true }}
-//       >
-//         <p className="text-gray-400">Made for developers, by developers. © 2024 Your Website Name</p>
-//         <div className="mt-4 flex justify-center gap-6">
-//           {["About Us", "Privacy Policy", "Contact"].map((link, index) => (
-//             <a
-//               key={index}
-//               href="#"
-//               className="text-gray-400 hover:text-purple-400 transition-colors"
-//             >
-//               {link}
-//             </a>
-//           ))}
-//         </div>
-//       </motion.footer>
-//     </div>
-//   );
-// };
-
-// export default HomePage;
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "./shared/Navbar";
@@ -436,6 +199,7 @@ const HomePage = () => {
             Your go-to platform for coding questions, community-driven answers,
             and knowledge sharing. Join our community !
           </motion.p>
+          <a href="/questions">
           <motion.div className="flex gap-6" variants={fadeInUp}>
             <motion.button
               className="group bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-lg font-semibold text-lg flex items-center gap-2 transform hover:scale-105 transition-transform"
@@ -454,6 +218,7 @@ const HomePage = () => {
               <Search className="group-hover:translate-x-1 transition-transform" />
             </motion.button>
           </motion.div>
+          </a>
 
           <motion.div
             className="absolute bottom-20 animate-bounce"
@@ -624,11 +389,11 @@ const HomePage = () => {
                       </span>
                       <span className="text-gray-400">{question.time}</span>
                       <div className="flex items-center gap-2">
-                        <img
+                        {/* <img
                           src={`/api/placeholder/32/32`}
                           alt={question.author.name}
                           className="w-6 h-6 rounded-full"
-                        />
+                        /> */}
                         <span className="text-gray-300">
                           {question.author.name}
                         </span>
@@ -677,7 +442,7 @@ const HomePage = () => {
               >
                 <div className="flex items-center gap-4 mb-4">
                   <img
-                    src={`/api/placeholder/64/64`}
+                    src={`https://github.com/shadcn.png`}
                     alt={user.name}
                     className="w-16 h-16 rounded-full border-2 border-purple-500"
                   />

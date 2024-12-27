@@ -5,7 +5,7 @@ import User from '../models/User.js';
 export const auth = async (req, res, next) => {
   // Get token from cookies
   const token = req.cookies.token; // Access token from cookies
-  console.log(token);
+
 
   // Check if token exists
   if (!token) {

@@ -21,7 +21,7 @@ app.use(helmet());
 
 // CORS configuration to allow only your frontend's origin
 const corsOptions = {
-  origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+  origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };

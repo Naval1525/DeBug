@@ -124,7 +124,7 @@ export const getQuestions = async (req, res) => {
   try {
     // Get questions with filtering
     const questions = await Question.find(filter)
-      .populate('user', 'username') // Populate user details
+      .populate('user', 'username reputation') // Populate user details and reputation
       .sort({ createdAt: -1 }); // Sort by most recent
 
     if (questions.length === 0) {
@@ -132,22 +132,77 @@ export const getQuestions = async (req, res) => {
     }
 
     // Get the number of answers for each question
-    const questionsWithAnswerCount = await Promise.all(
+    const questionsWithDetails = await Promise.all(
       questions.map(async (question) => {
         const answerCount = await Answer.countDocuments({ question: question._id });
         return {
           ...question.toObject(),
           answerCount,
+          user: {
+            username: question.user.username,
+            reputation: question.user.reputation,
+          },
         };
       })
     );
 
-    res.status(200).json(questionsWithAnswerCount);
+    res.status(200).json(questionsWithDetails);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error while fetching questions' });
   }
 };
+
+// export const getQuestions = async (req, res) => {
+//   const { tags, minVotes, maxVotes, status, search } = req.query;
+
+//   const filter = {};
+
+//   if (tags) filter.tags = { $in: tags.split(',') };
+//   if (status) filter.status = status;
+//   if (search) {
+//     filter.$or = [
+//       { title: { $regex: search, $options: 'i' } },
+//       { body: { $regex: search, $options: 'i' } },
+//     ];
+//   }
+//   if (minVotes || maxVotes) {
+//     filter.$and = [];
+//     if (minVotes) {
+//       filter.$and.push({ upvotes: { $gte: parseInt(minVotes, 10) } });
+//     }
+//     if (maxVotes) {
+//       filter.$and.push({ upvotes: { $lte: parseInt(maxVotes, 10) } });
+//     }
+//   }
+
+//   try {
+//     // Get questions with filtering
+//     const questions = await Question.find(filter)
+//       .populate('user', 'username') // Populate user details
+//       .sort({ createdAt: -1 }); // Sort by most recent
+
+//     if (questions.length === 0) {
+//       return res.status(404).json({ error: 'No questions found' });
+//     }
+
+//     // Get the number of answers for each question
+//     const questionsWithAnswerCount = await Promise.all(
+//       questions.map(async (question) => {
+//         const answerCount = await Answer.countDocuments({ question: question._id });
+//         return {
+//           ...question.toObject(),
+//           answerCount,
+//         };
+//       })
+//     );
+
+//     res.status(200).json(questionsWithAnswerCount);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Server error while fetching questions' });
+//   }
+// };
 // export const getQuestions = async (req, res) => {
 //   const { tags, minVotes, maxVotes, status, search } = req.query;
 
@@ -341,5 +396,63 @@ export const getUserAndAnswersByQuestion = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error while fetching question details' });
+  }
+};
+
+
+
+export const voteQuestion = async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    const { voteType } = req.body; // 'up' or 'down'
+    const userId = req.user._id; // Assuming you have user info in request from auth middleware
+
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    // Check if user has already voted
+    const hasUpvoted = question.upvotes.includes(userId);
+    const hasDownvoted = question.downvotes.includes(userId);
+
+    // Handle upvote
+    if (voteType === 'up') {
+      if (hasUpvoted) {
+        // Remove upvote if already upvoted
+        question.upvotes.pull(userId);
+        question.votes -= 1;
+      } else {
+        // Add upvote and remove downvote if exists
+        if (hasDownvoted) {
+          question.downvotes.pull(userId);
+          question.votes += 1;
+        }
+        question.upvotes.push(userId);
+        question.votes += 1;
+      }
+    }
+    // Handle downvote
+    else if (voteType === 'down') {
+      if (hasDownvoted) {
+        // Remove downvote if already downvoted
+        question.downvotes.pull(userId);
+        question.votes += 1;
+      } else {
+        // Add downvote and remove upvote if exists
+        if (hasUpvoted) {
+          question.upvotes.pull(userId);
+          question.votes -= 1;
+        }
+        question.downvotes.push(userId);
+        question.votes -= 1;
+      }
+    }
+
+    await question.save();
+    res.json({ votes: question.votes, hasUpvoted: question.upvotes.includes(userId), hasDownvoted: question.downvotes.includes(userId) });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Error processing vote', error: error.message });
   }
 };
