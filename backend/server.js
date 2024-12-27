@@ -21,7 +21,7 @@ app.use(helmet());
 
 // CORS configuration to allow only your frontend's origin
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://thunderous-lollipop-dc7bbf.netlify.app/",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
