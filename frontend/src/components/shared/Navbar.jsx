@@ -298,7 +298,7 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Popover } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { Home, Users, MessageCircle, LogOut, User } from "lucide-react";
+import { Home, Users, MessageCircle, LogOut, User, Search } from "lucide-react";
 
 export default function Navbar() {
   const [token, setToken] = useState(null);
@@ -322,6 +322,7 @@ export default function Navbar() {
     { href: "/", label: "Home", icon: Home },
     { href: "/questions", label: "Questions", icon: MessageCircle },
     { href: "/users", label: "Users", icon: Users },
+    { href: "https://astonishing-arithmetic-d5066a.netlify.app/", label: "Tech-UI", icon: Search },
   ];
 
   return (

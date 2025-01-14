@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "./shared/Navbar";
+
 import {
   ArrowRight,
   Star,
@@ -12,6 +13,7 @@ import {
   Search,
   ExternalLink,
 } from "lucide-react";
+import { Avatar } from "./ui/avatar";
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState("recent");
@@ -442,7 +444,7 @@ const HomePage = () => {
               >
                 <div className="flex items-center gap-4 mb-4">
                   <img
-                    src={`https://github.com/shadcn.png`}
+                    src={Avatar}
                     alt={user.name}
                     className="w-16 h-16 rounded-full border-2 border-purple-500"
                   />
