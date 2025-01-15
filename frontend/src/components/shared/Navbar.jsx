@@ -323,6 +323,7 @@ export default function Navbar() {
     { href: "/questions", label: "Questions", icon: MessageCircle },
     { href: "/users", label: "Users", icon: Users },
     { href: "https://astonishing-arithmetic-d5066a.netlify.app/", label: "Tech-UI", icon: Search },
+    { href: "https://rococo-tapioca-95fc7d.netlify.app/", label: "CC", icon: Search },
   ];
 
   return (
